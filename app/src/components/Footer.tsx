@@ -105,15 +105,6 @@ export default function Footer() {
           </p>
           <p className="font-sans text-[12px] text-mid-gray">
             &copy; 2026 Elevate. All rights reserved.
-            {' '}&mdash;{' '}
-            <a
-              href="https://www.beonweb.cm/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-amber-gold transition-colors"
-            >
-              Powered by Beonweb
-            </a>
           </p>
         </div>
       </div>
