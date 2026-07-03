@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Users, Target, TrendingUp, Check } from 'lucide-react'
+import { useState, useMemo } from 'react'
+import { Users, Target, TrendingUp, Check, Calculator } from 'lucide-react'
 
 const benefits = [
   { icon: Users, title: 'Team-Wide Coaching', desc: 'Tailored programs designed for your teams and their specific challenges.' },
@@ -8,13 +8,30 @@ const benefits = [
 ]
 
 const caseStudies = [
-  { company: 'Northgate Financial', result: '28% increase in leadership retention', quote: 'Elevate transformed how our managers communicate and lead.' },
-  { company: 'Vertex Consulting', result: '40+ leaders coached in 2024', quote: 'The corporate program gave our teams tools they still use daily.' },
+  { company: 'Northgate Financial', result: '28% increase in leadership retention', quote: 'Elevate transformed how our managers communicate and lead.', metric: '28%', metricLabel: 'Retention increase' },
+  { company: 'Vertex Consulting', result: '40+ leaders coached in 2024', quote: 'The corporate program gave our teams tools they still use daily.', metric: '40+', metricLabel: 'Leaders coached' },
+  { company: 'Meridian Health Group', result: '19% increase in employee engagement', quote: 'Our management team is more aligned and communicative than ever before.', metric: '19%', metricLabel: 'Engagement increase' },
+  { company: 'Brightline Logistics', result: '52 managers certified in 6 months', quote: 'A structured, measurable approach to leadership development at scale.', metric: '52', metricLabel: 'Managers certified' },
+  { company: 'Cascade Industries', result: '31% reduction in team turnover', quote: 'The ROI was evident within the first quarter of the engagement.', metric: '31%', metricLabel: 'Turnover reduction' },
+]
+
+const engagementModels = [
+  { title: 'Cohort Program', desc: 'Group coaching for up to 20 participants over 6-8 weeks, ideal for mid-level managers.' },
+  { title: 'Executive 1:1', desc: 'Dedicated one-on-one coaching for senior leaders, tailored to individual growth areas.' },
+  { title: 'Enterprise Partnership', desc: 'Ongoing multi-year engagement combining workshops, coaching and leadership assessments.' },
 ]
 
 export default function Corporate() {
   const [form, setForm] = useState({ company: '', email: '', teamSize: '', message: '' })
   const [sent, setSent] = useState(false)
+  const [managerCount, setManagerCount] = useState(10)
+  const [avgSalary, setAvgSalary] = useState(90000)
+
+  const estimatedROI = useMemo(() => {
+    const investment = managerCount * 1800
+    const productivityGain = managerCount * avgSalary * 0.08
+    return { investment, gain: Math.round(productivityGain) }
+  }, [managerCount, avgSalary])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -42,14 +59,69 @@ export default function Corporate() {
           </div>
 
           <h2 className="font-serif text-2xl text-deep-forest mb-8">Case Studies</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {caseStudies.map((study) => (
               <div key={study.company} className="p-8 rounded-2xl bg-warm-sand/40">
-                <p className="font-serif text-lg text-deep-forest italic mb-4">"{study.quote}"</p>
-                <p className="font-sans font-semibold text-deep-forest">{study.company}</p>
-                <p className="font-sans text-sm text-amber-gold">{study.result}</p>
+                <p className="font-serif text-3xl text-amber-gold mb-1">{study.metric}</p>
+                <p className="font-sans text-xs text-mid-gray uppercase tracking-wide mb-4">{study.metricLabel}</p>
+                <p className="font-serif text-base text-deep-forest italic mb-4">"{study.quote}"</p>
+                <p className="font-sans font-semibold text-deep-forest text-sm">{study.company}</p>
               </div>
             ))}
+          </div>
+
+          {/* Engagement models */}
+          <h2 className="font-serif text-2xl text-deep-forest mb-8">Engagement Models</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-16">
+            {engagementModels.map((model) => (
+              <div key={model.title} className="p-6 rounded-2xl border border-border-gray">
+                <h3 className="font-serif text-lg text-deep-forest mb-2">{model.title}</h3>
+                <p className="font-sans text-sm text-mid-gray">{model.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* ROI Calculator */}
+          <div className="mb-16 p-8 rounded-2xl border border-border-gray max-w-[600px]">
+            <div className="flex items-center gap-2 mb-6">
+              <Calculator size={22} className="text-amber-gold" />
+              <h2 className="font-serif text-2xl text-deep-forest">Estimate Your ROI</h2>
+            </div>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="font-sans text-sm text-mid-gray">Number of managers: {managerCount}</label>
+                <input
+                  type="range"
+                  min="5"
+                  max="50"
+                  value={managerCount}
+                  onChange={(e) => setManagerCount(Number(e.target.value))}
+                  className="w-full mt-2 accent-amber-gold"
+                />
+              </div>
+              <div>
+                <label className="font-sans text-sm text-mid-gray">Average manager salary: ${avgSalary.toLocaleString()}</label>
+                <input
+                  type="range"
+                  min="50000"
+                  max="200000"
+                  step="5000"
+                  value={avgSalary}
+                  onChange={(e) => setAvgSalary(Number(e.target.value))}
+                  className="w-full mt-2 accent-amber-gold"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border-gray">
+              <div>
+                <p className="font-sans text-xs text-mid-gray uppercase">Estimated investment</p>
+                <p className="font-serif text-xl text-deep-forest">${estimatedROI.investment.toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="font-sans text-xs text-mid-gray uppercase">Estimated productivity gain</p>
+                <p className="font-serif text-xl text-amber-gold">${estimatedROI.gain.toLocaleString()}</p>
+              </div>
+            </div>
           </div>
 
           {/* Quote form */}
